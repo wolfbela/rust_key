@@ -1,5 +1,15 @@
 pub mod app;
+use yew::prelude::*;
+
+#[function_component(App)]
+fn app() -> Html {
+    html!(
+        <div>
+            <p>{"Hello World"}</p>
+        </div>
+    )
+}
 
 fn main() {
-    println!("Hello, world!");
+    yew::Renderer::<App>::new().render();
 }
