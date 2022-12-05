@@ -1,0 +1,24 @@
+body {
+    background-color: #f2f2f2;
+}
+
+h1 {
+    font-family: 'Montserrat', sans-serif;
+}
+
+u {
+    text-decoration: none;
+    border-bottom: 2px solid #303030;
+}
+
+h2 {
+    font-family: 'Montserrat', sans-serif;
+}
+
+h3 {
+    font-family: 'Montserrat', sans-serif;
+}
+
+p {
+    font-family: 'Maven Pro', sans-serif;
+}
