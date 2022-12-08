@@ -9,4 +9,3 @@ edition = "2021"
 iced = "0.6.0"
 log = "0.4.17"
 ring = "0.16.20"
-yew = { version = "0.20.0", features = ["csr"] }

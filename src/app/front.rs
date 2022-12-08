@@ -1,14 +1,7 @@
 pub mod login;
 pub mod login_page;
 
-use login_page::MainLogin;
-use yew::prelude::*;
+// use login_page::master_login;
 
-#[function_component(App)]
-pub fn app() -> Html {
-    let _is_login = use_state(|| true);
-
-    html!(
-        <MainLogin />
-    )
-}
+#[allow(dead_code)]
+pub fn app() {}
