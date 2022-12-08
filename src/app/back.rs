@@ -5,4 +5,4 @@ store all login and password in the app
 -   associated link
 */
 pub mod login_gestion;
-pub mod main_login;
+pub mod master_login;

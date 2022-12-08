@@ -1,2 +1,2 @@
 #[allow(dead_code)]
-pub fn master_login() {}
+pub fn login_page() {}
