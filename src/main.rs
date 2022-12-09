@@ -1,3 +1,9 @@
+use iced::{Sandbox, Settings};
+
 mod app;
 
-fn main() {}
+use app::front::PasswordManager;
+
+fn main() {
+    PasswordManager::run(Settings::default());
+}
