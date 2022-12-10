@@ -1,34 +1,36 @@
 pub mod login;
-pub mod login_page;
+pub mod tabs;
 
 use iced::Sandbox;
+use tabs::Tabs;
 
+#[derive(Debug, Default)]
 pub struct PasswordManager {
-    login: String,
-    password: String,
+    tabs: Tabs,
 }
 
 #[derive(Debug, Clone)]
 pub enum Message {
-    AddPassword(String),
-    AddLogin(String),
-    Submit,
+    MasterPasswordInputChange(String),
+    SubmitMasterPassword,
+    LoginNameChange(String),
+    LoginPasswordChange(String),
+    AddLogin,
+    RemoveLogin,
 }
 
 impl Sandbox for PasswordManager {
     type Message = Message;
 
     fn new() -> Self {
-        todo!()
+        Self::default()
     }
 
     fn title(&self) -> String {
-        todo!()
+        String::from("RustKey")
     }
 
-    fn update(&mut self, message: Self::Message) {
-        todo!()
-    }
+    fn update(&mut self, message: Self::Message) {}
 
     fn view(&self) -> iced::Element<'_, Self::Message> {
         todo!()
