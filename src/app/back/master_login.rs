@@ -19,9 +19,15 @@ It will fille the MasterPassword struct with the content of it.
 */
 fn file_to_master_password(path_of_file: String) -> MasterPassword {
     let file_content = fs::read_to_string(path_of_file).unwrap();
-    let parsed_file = json::parse(&file_content.as_str());
+    let parsed_file = json::parse(&file_content.as_str()).unwrap();
 
-    todo!()
+    match parsed_file {
+        json::JsonValue::Object(object) => MasterPassword {
+            hashed_password: object["password"].to_string(),
+            salt: object["salt"].to_string().as_bytes(),
+        },
+        _ => panic!("File could not been parsed !!"),
+    }
 }
 
 /*
