@@ -1,7 +1,7 @@
 pub mod main_page;
 pub mod master_loggin_page;
 
-use crate::app::back::login_gestion::password_storing::Password;
+use crate::app::back::login_gestion::password_storing::Login;
 use iced::{
     widget::{container, text_input},
     Element, Sandbox,
@@ -14,7 +14,7 @@ use master_loggin_page::master_login_view;
 #[derive(Debug)]
 pub struct PasswordManager {
     master_password: String,
-    passwords: Vec<Password>,
+    passwords: Vec<Login>,
     is_logged: bool,
     error_master_password: bool,
 }
