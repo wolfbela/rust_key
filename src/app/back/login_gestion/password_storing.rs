@@ -1,6 +1,6 @@
 #[derive(Debug)]
 pub struct Login {
-    login: String,
-    password: String,
-    associated_websites: String,
+    _login: String,
+    _password: String,
+    _associated_websites: String,
 }
