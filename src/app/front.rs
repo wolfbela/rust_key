@@ -5,6 +5,7 @@ use crate::app::back::login_gestion::password_storing::Login;
 use iced::{Element, Sandbox};
 
 use super::back::master_login::verify_master_password;
+use crate::app::back::master_login::register_master_password;
 use main_page::main_page_view;
 use master_loggin_page::master_login_view;
 
@@ -20,7 +21,7 @@ pub struct PasswordManager {
 pub enum Message {
     MasterPasswordChange(String),
     SubmitMasterPasswordPress,
-    _RegisterMasterPassword,
+    RegisterMasterPassword,
     _AddLoginPress,
     _RemoveLogin,
     _LoginChange(String),
@@ -60,6 +61,10 @@ impl Sandbox for PasswordManager {
                 }
                 self.master_password = String::from("");
             }
+            Message::RegisterMasterPassword => {
+                register_master_password(&self.master_password);
+                self.master_password = String::from("");
+            }
             _ => todo!(),
             // Message::LoginChange(_) => todo!(),
             // Message::PasswordChange(_) => todo!(),
@@ -71,7 +76,7 @@ impl Sandbox for PasswordManager {
     fn view(&self) -> Element<'_, Self::Message> {
         match self.is_logged {
             true => main_page_view(&self.passwords),
-            false => master_login_view(&self.master_password),
+            false => master_login_view(&self.master_password.as_str()),
         }
     }
 }
