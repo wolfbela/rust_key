@@ -1,5 +1,5 @@
 use super::Message;
-use iced::widget::{button, row, text_input};
+use iced::widget::{button, row, text, text_input};
 use std::path::Path;
 
 const MASTER_PASSWORD_FILE_PATH: &str = "C:\\Users\\elieu\\AppData\\Local\\rustKey.json";

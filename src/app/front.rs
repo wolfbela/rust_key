@@ -1,7 +1,7 @@
 pub mod main_page;
 pub mod master_loggin_page;
 
-use crate::app::back::login_gestion::password_storing::Login;
+use crate::app::back::login_gestion::login_storing::Login;
 use iced::{Element, Sandbox};
 
 use super::back::master_login::verify_master_password;
@@ -65,10 +65,10 @@ impl Sandbox for PasswordManager {
                 register_master_password(&self.master_password);
                 self.master_password = String::from("");
             }
-            _ => todo!(),
+            // Message::AddLoginPress => todo!(),
             // Message::LoginChange(_) => todo!(),
             // Message::PasswordChange(_) => todo!(),
-            // Message::AddLoginPress => todo!(),
+            _ => todo!(),
             // Message::RemoveLogin => todo!(),
         }
     }

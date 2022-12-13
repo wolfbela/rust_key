@@ -8,4 +8,4 @@ pub mod password_generation;
 -   associate the password with the login
 -   add some website for autocompletion -> (add web extension finally)
 */
-pub mod password_storing;
+pub mod login_storing;

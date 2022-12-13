@@ -83,8 +83,6 @@ pub fn verify_master_password(password_entered: &String) -> bool {
     let reference_password: MasterPassword = file_to_master_password(PATH_OF_MASTER_FILE);
     let nb_iteration: NonZeroU32 = NonZeroU32::new(1024).unwrap();
 
-    dbg!(&reference_password);
-
     /*
     This function  will verify the password entered.
     -   if the result is an Error, it means that we entered the wrong password.
