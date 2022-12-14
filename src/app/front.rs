@@ -15,6 +15,8 @@ pub struct PasswordManager {
     passwords: Vec<Login>,
     is_logged: bool,
     error_master_password: bool,
+    _adding_password: bool,
+    _removing_password: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -22,7 +24,7 @@ pub enum Message {
     MasterPasswordChange(String),
     SubmitMasterPasswordPress,
     RegisterMasterPassword,
-    _AddLoginPress,
+    AddLoginPress,
     _RemoveLogin,
     _LoginChange(String),
     _PasswordChange(String),
@@ -37,6 +39,8 @@ impl Sandbox for PasswordManager {
             passwords: vec![],
             is_logged: false,
             error_master_password: false,
+            _adding_password: false,
+            _removing_password: false,
         }
     }
 
@@ -65,7 +69,7 @@ impl Sandbox for PasswordManager {
                 register_master_password(&self.master_password);
                 self.master_password = String::from("");
             }
-            // Message::AddLoginPress => todo!(),
+            Message::AddLoginPress => todo!(),
             // Message::LoginChange(_) => todo!(),
             // Message::PasswordChange(_) => todo!(),
             _ => todo!(),

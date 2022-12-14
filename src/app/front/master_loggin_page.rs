@@ -1,5 +1,5 @@
 use super::Message;
-use iced::widget::{button, row, text, text_input};
+use iced::widget::{button, row, text_input};
 use std::path::Path;
 
 const MASTER_PASSWORD_FILE_PATH: &str = "C:\\Users\\elieu\\AppData\\Local\\rustKey.json";
@@ -13,13 +13,13 @@ fn register(password_entered: &str) -> iced::Element<'static, Message> {
     .width(iced::Length::FillPortion(2))
     .password();
 
-    let submit_button = button("Register")
+    let register_button = button("Register")
         .width(iced::Length::FillPortion(1))
         .on_press(Message::RegisterMasterPassword);
 
     row!()
         .push(master_password_input_box)
-        .push(submit_button)
+        .push(register_button)
         .into()
 }
 
