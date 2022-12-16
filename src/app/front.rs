@@ -1,7 +1,7 @@
 pub mod main_page;
 pub mod master_loggin_page;
 
-use crate::app::back::login_gestion::login_storing::Login;
+use crate::app::back::login_gestion::login_storing::Logins;
 use iced::{Element, Sandbox};
 
 use super::back::master_login::verify_master_password;
@@ -10,13 +10,21 @@ use main_page::main_page_view;
 use master_loggin_page::master_login_view;
 
 #[derive(Debug)]
+pub struct NewLogin {
+    pub new_login_password: String,
+    pub new_login_username: String,
+    pub new_login_name: String,
+}
+
+#[derive(Debug)]
 pub struct PasswordManager {
     master_password: String,
-    passwords: Vec<Login>,
+    passwords: Logins,
     is_logged: bool,
+    new_login: NewLogin,
     error_master_password: bool,
-    _adding_password: bool,
-    _removing_password: bool,
+    adding_login: bool,
+    _removing_login: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -25,9 +33,10 @@ pub enum Message {
     SubmitMasterPasswordPress,
     RegisterMasterPassword,
     AddLoginPress,
+    RegisterNewLoginPress(String, String),
     _RemoveLogin,
     _LoginChange(String),
-    _PasswordChange(String),
+    PasswordChange(String),
 }
 
 impl Sandbox for PasswordManager {
@@ -36,11 +45,16 @@ impl Sandbox for PasswordManager {
     fn new() -> Self {
         PasswordManager {
             master_password: String::from(""),
-            passwords: vec![],
+            passwords: Logins::new(),
+            new_login: NewLogin {
+                new_login_password: String::from(""),
+                new_login_username: String::from(""),
+                new_login_name: String::from(""),
+            },
             is_logged: false,
             error_master_password: false,
-            _adding_password: false,
-            _removing_password: false,
+            adding_login: false,
+            _removing_login: false,
         }
     }
 
@@ -69,17 +83,29 @@ impl Sandbox for PasswordManager {
                 register_master_password(&self.master_password);
                 self.master_password = String::from("");
             }
-            Message::AddLoginPress => todo!(),
-            // Message::LoginChange(_) => todo!(),
-            // Message::PasswordChange(_) => todo!(),
-            _ => todo!(),
-            // Message::RemoveLogin => todo!(),
+            Message::AddLoginPress => {
+                self.adding_login = true;
+            }
+            Message::RegisterNewLoginPress(login, password) => {}
+            Message::_RemoveLogin => todo!(),
+            Message::_LoginChange(_) => todo!(),
+            Message::PasswordChange(_) => todo!(),
         }
     }
 
     fn view(&self) -> Element<'_, Self::Message> {
         match self.is_logged {
-            true => main_page_view(&self.passwords),
+            /*
+            Self passwords is encrypted at the beginning, it will be decrypted after the user is logged in.
+            So it need to be a mutable variable.
+            */
+            true => main_page_view(
+                &self.passwords.logins,
+                &self.new_login.new_login_name,
+                &self.new_login.new_login_username,
+                &self.new_login.new_login_password,
+                self.adding_login,
+            ),
             false => master_login_view(&self.master_password.as_str()),
         }
     }
