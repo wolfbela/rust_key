@@ -35,8 +35,9 @@ pub enum Message {
     AddLoginPress,
     RegisterNewLoginPress(String, String),
     _RemoveLogin,
-    _LoginChange(String),
     PasswordChange(String),
+    LoginNameChange(String),
+    LoginUsernameChange(String),
 }
 
 impl Sandbox for PasswordManager {
@@ -86,10 +87,17 @@ impl Sandbox for PasswordManager {
             Message::AddLoginPress => {
                 self.adding_login = true;
             }
-            Message::RegisterNewLoginPress(login, password) => {}
+            Message::PasswordChange(new_password) => {
+                self.new_login.new_login_password = new_password;
+            }
+            Message::LoginUsernameChange(new_username) => {
+                self.new_login.new_login_username = new_username;
+            }
+            Message::LoginNameChange(new_name) => {
+                self.new_login.new_login_name = new_name;
+            }
+            Message::RegisterNewLoginPress(_login, _password) => {}
             Message::_RemoveLogin => todo!(),
-            Message::_LoginChange(_) => todo!(),
-            Message::PasswordChange(_) => todo!(),
         }
     }
 
@@ -101,9 +109,9 @@ impl Sandbox for PasswordManager {
             */
             true => main_page_view(
                 &self.passwords.logins,
-                &self.new_login.new_login_name,
-                &self.new_login.new_login_username,
-                &self.new_login.new_login_password,
+                self.new_login.new_login_name.as_str(),
+                self.new_login.new_login_username.as_str(),
+                self.new_login.new_login_password.as_str(),
                 self.adding_login,
             ),
             false => master_login_view(&self.master_password.as_str()),

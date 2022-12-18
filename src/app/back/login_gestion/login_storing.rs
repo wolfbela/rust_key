@@ -7,6 +7,7 @@ pub struct Login {
 }
 
 impl Login {
+    #[allow(dead_code)]
     pub fn new() -> Login {
         Login {
             _name: String::from(""),
