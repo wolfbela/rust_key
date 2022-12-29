@@ -1,4 +1,4 @@
-use crate::app::back::write_password_into_file;
+use crate::app::back::write_into_file;
 use rand::{rngs::StdRng, Rng, SeedableRng};
 use ring::{digest, pbkdf2};
 use serde::{Deserialize, Serialize};
@@ -59,7 +59,7 @@ pub fn register_master_password(new_master_password: &str) {
     In case of error during the writing, panic with a clear message.
     */
     let serialized_struct = serde_json::to_string(&struct_master_password).unwrap();
-    match write_password_into_file(serialized_struct.as_str(), PATH_OF_MASTER_FILE) {
+    match write_into_file(serialized_struct.as_str(), PATH_OF_MASTER_FILE) {
         Ok(_) => return,
         Err(_) => panic!("Could not write the data to a file !!"),
     }

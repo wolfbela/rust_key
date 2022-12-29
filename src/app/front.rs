@@ -1,7 +1,7 @@
 pub mod main_page;
 pub mod master_loggin_page;
 
-use crate::app::back::login_gestion::login_storing::Logins;
+use crate::app::back::login_gestion::login_storing::Login;
 use iced::{Element, Sandbox};
 
 use super::back::master_login::verify_master_password;
@@ -19,7 +19,7 @@ pub struct NewLogin {
 #[derive(Debug)]
 pub struct PasswordManager {
     master_password: String,
-    passwords: Logins,
+    logins: Vec<Login>,
     is_logged: bool,
     new_login: NewLogin,
     error_master_password: bool,
@@ -33,7 +33,7 @@ pub enum Message {
     SubmitMasterPasswordPress,
     RegisterMasterPassword,
     AddLoginPress,
-    RegisterNewLoginPress(String, String),
+    RegisterNewLoginPress(String, String, String),
     _RemoveLogin,
     PasswordChange(String),
     LoginNameChange(String),
@@ -46,7 +46,7 @@ impl Sandbox for PasswordManager {
     fn new() -> Self {
         PasswordManager {
             master_password: String::from(""),
-            passwords: Logins::new(),
+            logins: vec![],
             new_login: NewLogin {
                 new_login_password: String::from(""),
                 new_login_username: String::from(""),
@@ -96,7 +96,22 @@ impl Sandbox for PasswordManager {
             Message::LoginNameChange(new_name) => {
                 self.new_login.new_login_name = new_name;
             }
-            Message::RegisterNewLoginPress(_login, _password) => {}
+            Message::RegisterNewLoginPress(name, username, password) => {
+                self.logins.push(Login {
+                    name: name,
+                    username: username,
+                    password: password,
+                    associated_websites: String::from(""),
+                });
+
+                /*
+                reset new login value before closing the adding form.
+                */
+                self.new_login.new_login_name = String::from("");
+                self.new_login.new_login_username = String::from("");
+                self.new_login.new_login_password = String::from("");
+                self.adding_login = false;
+            }
             Message::_RemoveLogin => todo!(),
         }
     }
@@ -108,7 +123,7 @@ impl Sandbox for PasswordManager {
             So it need to be a mutable variable.
             */
             true => main_page_view(
-                &self.passwords.logins,
+                &self.logins,
                 self.new_login.new_login_name.as_str(),
                 self.new_login.new_login_username.as_str(),
                 self.new_login.new_login_password.as_str(),

@@ -9,13 +9,15 @@ fn adding_login(
 ) -> iced::Element<'static, Message> {
     let name = text_input("Name", new_login_name, Message::LoginNameChange);
     let username = text_input("username", new_login_username, Message::LoginUsernameChange);
-    let password = text_input("username", new_login_password, Message::PasswordChange);
+    let password = text_input("password", new_login_password, Message::PasswordChange);
     let submit_button = button("Submit")
         .width(iced::Length::FillPortion(1))
         .on_press(Message::RegisterNewLoginPress(
+            new_login_name.to_string(),
             new_login_password.to_string(),
             new_login_username.to_string(),
         ));
+
     column![name, username, password, submit_button]
         .spacing(20)
         .into()
@@ -37,6 +39,7 @@ pub fn main_page_view(
     new_login_password: &str,
     adding_password: bool,
 ) -> iced::Element<'static, Message> {
+    dbg!(logins);
     match adding_password {
         true => adding_login(new_login_name, new_login_username, new_login_password),
         false => classic_display(),
