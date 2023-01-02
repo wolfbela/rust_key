@@ -1,5 +1,3 @@
-use std::vec;
-
 use rand::{rngs::StdRng, Rng, SeedableRng};
 use ring::aead::*;
 
