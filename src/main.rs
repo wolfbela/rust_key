@@ -1,10 +1,10 @@
 mod app;
 
 use app::front::PasswordManager;
-use iced::{Sandbox, Settings};
+use iced::{Application, Settings};
 
 fn main() -> iced::Result {
-    let settings = Settings::default();
+    let mut settings = Settings::default();
     settings.exit_on_close_request = false;
     PasswordManager::run(settings)
 }

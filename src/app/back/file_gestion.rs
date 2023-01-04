@@ -81,11 +81,14 @@ pub fn encrypt_content(content: &str, key: &[u8]) -> String {
     The in_out variable has the file contente in clear.
     The funtion will encrypte the file content and put it into the vec_content var again.
     */
-    SealingKey::seal_in_place_append_tag(
+    match SealingKey::seal_in_place_append_tag(
         &mut encryption_key,
         Aad::from(additional_data),
         &mut vec_content,
-    );
+    ) {
+        Ok(_) => dbg!("Success encryption !"),
+        Err(_) => panic!("Error encryption T-T"),
+    };
 
     String::from_utf8(vec_content).unwrap()
 }

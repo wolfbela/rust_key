@@ -1,4 +1,4 @@
-use crate::app::back::write_into_file;
+use crate::app::back::write_master_password_into_file;
 use rand::{rngs::StdRng, Rng, SeedableRng};
 use ring::{digest, pbkdf2};
 use serde::{Deserialize, Serialize};
@@ -59,7 +59,7 @@ pub fn register_master_password(new_master_password: &str) {
     In case of error during the writing, panic with a clear message.
     */
     let serialized_struct = serde_json::to_string(&struct_master_password).unwrap();
-    match write_into_file(serialized_struct.as_str(), PATH_OF_MASTER_FILE) {
+    match write_master_password_into_file(serialized_struct.as_str(), PATH_OF_MASTER_FILE) {
         Ok(_) => return,
         Err(_) => panic!("Could not write the data to a file !!"),
     }
@@ -79,7 +79,7 @@ This function should verify the master password.
 It will apply a PBKDF2 algo on the enter password and will compare it to the stored master password.
 */
 #[allow(dead_code)]
-pub fn verify_master_password(password_entered: &String) -> bool {
+pub fn verify_master_password(password_entered: &str) -> bool {
     let reference_password: MasterPassword = file_to_master_password(PATH_OF_MASTER_FILE);
     let nb_iteration: NonZeroU32 = NonZeroU32::new(1024).unwrap();
 
@@ -96,4 +96,29 @@ pub fn verify_master_password(password_entered: &String) -> bool {
     )
     .map_err(|_| Error::WrongUserOrPassword)
     .is_ok()
+}
+
+/*
+Creation of the sealing passwords key.
+
+The key is the correcte pasword with a 500 times hashing with SHA256.
+The goal of this is the automaticly generate the sealing passwords key only when the correct password is entered.
+
+With that, it won't be possible for a malicious user to still the key and decrypt the logins store in the app.
+*/
+#[allow(dead_code)]
+fn sealing_password_logins(password_entered: &str) -> [u8; 32] {
+    let reference_password: MasterPassword = file_to_master_password(PATH_OF_MASTER_FILE);
+    let mut hashed_key = [0u8; ring::digest::SHA256_OUTPUT_LEN];
+    let nb_iteration: NonZeroU32 = NonZeroU32::new(500).unwrap();
+
+    pbkdf2::derive(
+        pbkdf2::PBKDF2_HMAC_SHA256,
+        nb_iteration,
+        &reference_password.salt,
+        &password_entered.as_bytes(),
+        &mut hashed_key,
+    );
+
+    hashed_key
 }

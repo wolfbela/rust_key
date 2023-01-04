@@ -1,13 +1,15 @@
 pub mod main_page;
 pub mod master_loggin_page;
 
-use crate::app::back::login_gestion::login_storing::Login;
-use iced::{Element, Sandbox};
+use crate::app::back::{login_gestion::login_storing::Login, write_logins_into_file};
+use iced::{window, Application, Command, Element, Subscription};
 
 use super::back::master_login::verify_master_password;
 use crate::app::back::master_login::register_master_password;
 use main_page::main_page_view;
 use master_loggin_page::master_login_view;
+
+const PATH_OF_LOGINS_FILE: &str = "C:\\Users\\elieu\\AppData\\Local\\rustKey.json";
 
 #[derive(Debug)]
 pub struct NewLogin {
@@ -23,7 +25,9 @@ pub struct PasswordManager {
     is_logged: bool,
     new_login: NewLogin,
     error_master_password: bool,
+    encrytion_key: [u8; 32],
     adding_login: bool,
+    should_exit: bool,
     _removing_login: bool,
 }
 
@@ -37,33 +41,39 @@ pub enum Message {
     _RemoveLogin,
     PasswordChange(String),
     LoginNameChange(String),
+    OnEvent(iced::Event),
     LoginUsernameChange(String),
 }
 
-impl Sandbox for PasswordManager {
+impl Application for PasswordManager {
     type Message = Message;
 
-    fn new() -> Self {
-        PasswordManager {
-            master_password: String::from(""),
-            logins: vec![],
-            new_login: NewLogin {
-                new_login_password: String::from(""),
-                new_login_username: String::from(""),
-                new_login_name: String::from(""),
+    fn new(_flags: ()) -> (PasswordManager, Command<Message>) {
+        (
+            PasswordManager {
+                master_password: String::from(""),
+                logins: vec![],
+                is_logged: false,
+                new_login: NewLogin {
+                    new_login_password: String::from(""),
+                    new_login_username: String::from(""),
+                    new_login_name: String::from(""),
+                },
+                error_master_password: false,
+                encrytion_key: [0u8; 32],
+                adding_login: false,
+                should_exit: false,
+                _removing_login: false,
             },
-            is_logged: false,
-            error_master_password: false,
-            adding_login: false,
-            _removing_login: false,
-        }
+            Command::none(),
+        )
     }
 
     fn title(&self) -> String {
         String::from("RustKey")
     }
 
-    fn update(&mut self, message: Self::Message) {
+    fn update(&mut self, message: Self::Message) -> iced::Command<Message> {
         match message {
             Message::MasterPasswordChange(new_master_password) => {
                 self.master_password = new_master_password;
@@ -105,15 +115,51 @@ impl Sandbox for PasswordManager {
                 });
 
                 /*
-                reset new login value before closing the adding form.
+                reset new login value before closing the adding form to reset its feilds.
                 */
                 self.new_login.new_login_name = String::from("");
                 self.new_login.new_login_username = String::from("");
                 self.new_login.new_login_password = String::from("");
                 self.adding_login = false;
             }
+            Message::OnEvent(event) => {
+                /*
+                We are looking if we clicked on the closing button.
+
+                At this time, we can save the logins in a file and then live the
+                */
+                if iced::Event::Window(window::Event::CloseRequested) == event {
+                    dbg!("Sould exit know");
+                    match write_logins_into_file(
+                        serde_json::to_string(&self.logins).unwrap().as_str(),
+                        PATH_OF_LOGINS_FILE,
+                        &self.encrytion_key,
+                    ) {
+                        Ok(_) => dbg!("Could write the content in a file"),
+                        Err(_) => dbg!("Could not write the content in a file"),
+                    };
+                    self.should_exit = true;
+                }
+            }
             Message::_RemoveLogin => todo!(),
         }
+
+        iced::Command::none()
+    }
+
+    fn subscription(&self) -> Subscription<Message> {
+        iced_native::subscription::events().map(Message::OnEvent)
+    }
+
+    /*
+    This function exist in the default application trait.
+    By default, it's at false (not exiting application).
+
+    Here, we're ovewriting the implementation and now, it's depend of the `should_exit` attribute wich pass to true
+    with clicking on the closing button.
+    */
+    fn should_exit(&self) -> bool {
+        self.should_exit
     }
 
     fn view(&self) -> Element<'_, Self::Message> {
@@ -132,4 +178,10 @@ impl Sandbox for PasswordManager {
             false => master_login_view(&self.master_password.as_str()),
         }
     }
+
+    type Executor = iced::executor::Default;
+
+    type Theme = iced::Theme;
+
+    type Flags = ();
 }
