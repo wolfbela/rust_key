@@ -90,7 +90,7 @@ pub fn encrypt_content(content: &str, key: &[u8]) -> String {
         Err(_) => panic!("Error encryption T-T"),
     };
 
-    String::from_utf8(vec_content).unwrap()
+    serde_json::to_string(&vec_content).unwrap()
 }
 
 #[allow(dead_code)]

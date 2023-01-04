@@ -9,7 +9,7 @@ use crate::app::back::master_login::register_master_password;
 use main_page::main_page_view;
 use master_loggin_page::master_login_view;
 
-const PATH_OF_LOGINS_FILE: &str = "C:\\Users\\elieu\\AppData\\Local\\rustKey.json";
+const PATH_OF_LOGINS_FILE: &str = "C:\\Users\\elieu\\AppData\\Local\\rustKey-logins.json";
 
 #[derive(Debug)]
 pub struct NewLogin {
