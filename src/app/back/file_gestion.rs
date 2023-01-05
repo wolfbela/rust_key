@@ -45,6 +45,9 @@ pub fn encrypt_content(content: &str, key: &[u8]) -> String {
         nonces: create_nonce_sequence(content.as_bytes()),
     };
 
+    /*
+    Save the nonces to decrypt the logins when the app start again.
+    */
     match MyNonceSequence::save_nonce_sequence(&nonce_sequence.nonces) {
         Ok(_) => dbg!("Nonces Well Saved"),
         Err(_) => dbg!("Could not save Nonces"),
