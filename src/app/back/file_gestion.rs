@@ -1,26 +1,14 @@
+pub mod nonce_sequence_gestion;
+
 use rand::{rngs::StdRng, Rng, SeedableRng};
 use ring::aead::*;
 
-pub mod nonce_sequence_gestion;
-
-struct MyNonceSequence {
-    nonces: Vec<Nonce>,
-}
-
-impl NonceSequence for MyNonceSequence {
-    fn advance(&mut self) -> Result<Nonce, ring::error::Unspecified> {
-        match self.nonces.pop() {
-            Some(nonce) => Ok(nonce),
-            None => Err(ring::error::Unspecified),
-        }
-    }
-}
+use nonce_sequence_gestion::MyNonceSequence;
 
 /*
 Each block has to be of 64 bits. each block need a nonce to have unique encryption. A nonce (Number once = number used one time).
 Here, the goal is to generate a random nonce for each block and put all of those into res.
 */
-#[allow(dead_code)]
 fn create_nonce_sequence(plane_text: &[u8]) -> Vec<Nonce> {
     let nb_of_blocks = plane_text.len() / 64 + 1;
 
@@ -49,13 +37,17 @@ each of those blocks is made of the plain text and a tag which ensure that the b
 the goal of the algorithme is to take the whole block, multiplies is by the 'encryption_key'.
 Also, each block is associated with a counter wich ensure an encryption wich is unique.
 */
-#[allow(dead_code)]
 pub fn encrypt_content(content: &str, key: &[u8]) -> String {
     /*
     Instantiation of nonce sequence, it is necessary to get the encryption key
     */
     let nonce_sequence = MyNonceSequence {
         nonces: create_nonce_sequence(content.as_bytes()),
+    };
+
+    match MyNonceSequence::save_nonce_sequence(&nonce_sequence.nonces) {
+        Ok(_) => dbg!("Nonces Well Saved"),
+        Err(_) => dbg!("Could not save Nonces"),
     };
 
     /*
