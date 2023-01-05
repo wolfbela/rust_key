@@ -1,9 +1,12 @@
 pub mod nonce_sequence_gestion;
 
+use std::fs;
+
 use rand::{rngs::StdRng, Rng, SeedableRng};
 use ring::aead::*;
 
-use nonce_sequence_gestion::MyNonceSequence;
+use crate::app::front::PATH_OF_LOGINS_FILE;
+use nonce_sequence_gestion::{load_nonces, MyNonceSequence};
 
 /*
 Each block has to be of 64 bits. each block need a nonce to have unique encryption. A nonce (Number once = number used one time).
@@ -88,7 +91,26 @@ pub fn encrypt_content(content: &str, key: &[u8]) -> String {
     serde_json::to_string(&vec_content).unwrap()
 }
 
-#[allow(dead_code)]
-pub fn decrypt_content(_content: &str) -> String {
-    todo!()
+/*
+When openning the application, that will load the logins after the authentication.
+*/
+pub fn decrypt_content(key: &[u8]) -> String {
+    let nonce_sequence = MyNonceSequence {
+        nonces: load_nonces(),
+    };
+
+    let mut decryption_key = OpeningKey::new(
+        UnboundKey::new(&CHACHA20_POLY1305, &key).unwrap(),
+        nonce_sequence,
+    );
+
+    let additional_data: [u8; 0] = [];
+
+    let file_content = fs::read_to_string(PATH_OF_LOGINS_FILE).unwrap();
+    let mut content = file_content.as_bytes().to_vec();
+    match decryption_key.open_in_place(Aad::from(&additional_data), &mut content) {
+        Ok(_) => dbg!("Decryption succeeded"),
+        Err(_) => dbg!("Decryption failed"),
+    };
+    String::from_utf8(content).unwrap()
 }

@@ -1,4 +1,4 @@
-use std::fs::File;
+use std::fs::{self, File};
 use std::io::prelude::*;
 
 use ring::aead::{Nonce, NonceSequence, NONCE_LEN};
@@ -42,4 +42,29 @@ impl MyNonceSequence {
         file.write_all(content_nonces.as_bytes())?;
         Ok(())
     }
+}
+
+/*
+Load nonces from the nonces file.
+The nonces will be use to decrypt the stored files.
+*/
+pub fn load_nonces() -> Vec<Nonce> {
+    let file_content = fs::read_to_string(PATH_OF_NONCES_FILE).unwrap();
+
+    /*
+    Retransformation of file into an array of u8
+    */
+    let nonces_as_arr: serde_json::Value = serde_json::from_str(&file_content).unwrap();
+    let mut res: Vec<Nonce> = Vec::new();
+
+    dbg!(&nonces_as_arr["Array"]);
+
+    /*
+    Change values in nonces
+    */
+    // for nonce in nonces_as_arr {
+    //     res.push(Nonce::assume_unique_for_key(nonce));
+    // }
+
+    res
 }

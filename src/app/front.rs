@@ -1,15 +1,16 @@
 pub mod main_page;
 pub mod master_loggin_page;
 
-use crate::app::back::{login_gestion::login_storing::Login, write_logins_into_file};
+use crate::app::back::{
+    file_gestion::decrypt_content, login_gestion::login_storing::Login, write_logins_into_file,
+};
 use iced::{window, Application, Command, Element, Subscription};
 
-use super::back::master_login::verify_master_password;
-use crate::app::back::master_login::register_master_password;
+use super::back::master_login::{register_master_password, verify_master_password};
 use main_page::main_page_view;
 use master_loggin_page::master_login_view;
 
-const PATH_OF_LOGINS_FILE: &str = "C:\\Users\\elieu\\AppData\\Local\\rustKey-logins.json";
+pub const PATH_OF_LOGINS_FILE: &str = "C:\\Users\\elieu\\AppData\\Local\\rustKey-logins.json";
 
 #[derive(Debug)]
 pub struct NewLogin {
@@ -83,6 +84,7 @@ impl Application for PasswordManager {
                     true => {
                         self.is_logged = true;
                         self.error_master_password = false;
+                        dbg!(&decrypt_content(&self.encrytion_key));
                     }
                     false => {
                         self.error_master_password = true;

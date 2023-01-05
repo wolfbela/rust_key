@@ -18,7 +18,6 @@ pub fn write_master_password_into_file(content: &str, path: &str) -> std::io::Re
     Ok(())
 }
 
-#[allow(dead_code)]
 pub fn write_logins_into_file(content: &str, path: &str, key: &[u8]) -> std::io::Result<()> {
     let mut file = File::create(path)?;
     file.write_all(encrypt_content(content, key).as_bytes())?;
