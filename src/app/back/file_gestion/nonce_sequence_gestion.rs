@@ -2,11 +2,17 @@ use std::fs::{self, File};
 use std::io::prelude::*;
 
 use ring::aead::{Nonce, NonceSequence, NONCE_LEN};
+use serde::{Deserialize, Serialize};
 
 const PATH_OF_NONCES_FILE: &str = "C:\\Users\\elieu\\AppData\\Local\\rustKey-nonces.json";
 
 pub struct MyNonceSequence {
     pub nonces: Vec<Nonce>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Nonces {
+    nonces: [[u8; NONCE_LEN]; 1],
 }
 
 /*
@@ -54,17 +60,22 @@ pub fn load_nonces() -> Vec<Nonce> {
     /*
     Retransformation of file into an array of u8
     */
-    let nonces_as_arr: serde_json::Value = serde_json::from_str(&file_content).unwrap();
+    let nonces_as_arr: Vec<Vec<u8>> = serde_json::from_str(&file_content).unwrap();
     let mut res: Vec<Nonce> = Vec::new();
 
-    dbg!(&nonces_as_arr["Array"]);
+    dbg!(&nonces_as_arr);
 
     /*
     Change values in nonces
     */
-    // for nonce in nonces_as_arr {
-    //     res.push(Nonce::assume_unique_for_key(nonce));
-    // }
+    for elm in nonces_as_arr {
+        /*
+        Put the 12 element in [u8; 12] array.
+        After that, the `assume_unique_for_key` will generat the Nonce value.
+        */
+        let nonce: [u8; 12] = elm.as_slice()[0..12].try_into().unwrap();
+        res.push(Nonce::assume_unique_for_key(nonce));
+    }
 
     res
 }

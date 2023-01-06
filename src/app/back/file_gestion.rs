@@ -93,12 +93,20 @@ pub fn encrypt_content(content: &str, key: &[u8]) -> String {
 
 /*
 When openning the application, that will load the logins after the authentication.
+To do that, it will reverse the CHACHA20 encryption by using the same key and the same nonces.
 */
 pub fn decrypt_content(key: &[u8]) -> String {
+    /*
+    Creation of the nonces sequences using the nonces of the last session.
+    To get those, we're using the file where we stored it.
+    */
     let nonce_sequence = MyNonceSequence {
         nonces: load_nonces(),
     };
 
+    /*
+    Creation of the decryption key using the hash of the master password (after login)
+    */
     let mut decryption_key = OpeningKey::new(
         UnboundKey::new(&CHACHA20_POLY1305, &key).unwrap(),
         nonce_sequence,
@@ -107,10 +115,33 @@ pub fn decrypt_content(key: &[u8]) -> String {
     let additional_data: [u8; 0] = [];
 
     let file_content = fs::read_to_string(PATH_OF_LOGINS_FILE).unwrap();
-    let mut content = file_content.as_bytes().to_vec();
+    /*
+    Change the file content value into the array of encrypted valued in content var.
+    */
+    let mut content: Vec<u8> = serde_json::from_str(&file_content).unwrap();
+
+    /*
+    Decryption of the file
+    The in_out variable has the file content in encrypted.
+    The funtion will decrypte the content and put it into the content var again.
+    */
     match decryption_key.open_in_place(Aad::from(&additional_data), &mut content) {
         Ok(_) => dbg!("Decryption succeeded"),
         Err(_) => dbg!("Decryption failed"),
     };
-    String::from_utf8(content).unwrap()
+
+    /*
+    Strip of the content to stop it after the first '\0'.
+    Some value which are not a string could be still stored after the value of the string.
+    */
+    let stipped_content = content
+        .iter()
+        .take_while(|&&x| x != 0)
+        .map(|&x| x)
+        .collect::<Vec<u8>>();
+
+    /*
+    Change of the Vec<u8> into a string.
+    */
+    String::from_utf8(stipped_content).unwrap()
 }
