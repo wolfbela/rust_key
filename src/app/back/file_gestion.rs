@@ -133,6 +133,7 @@ pub fn decrypt_content(key: &[u8]) -> String {
     /*
     Strip of the content to stop it after the first '\0'.
     Some value which are not a string could be still stored after the value of the string.
+    (the encrypted data is longer than the original one)
     */
     let stipped_content = content
         .iter()

@@ -84,7 +84,8 @@ impl Application for PasswordManager {
                     true => {
                         self.is_logged = true;
                         self.error_master_password = false;
-                        dbg!(&decrypt_content(&self.encrytion_key));
+                        let logins_json_string = decrypt_content(&self.encrytion_key);
+                        self.logins = serde_json::from_str(&logins_json_string).unwrap();
                     }
                     false => {
                         self.error_master_password = true;
