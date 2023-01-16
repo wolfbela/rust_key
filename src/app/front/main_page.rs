@@ -1,35 +1,36 @@
+pub mod buttons_view;
+pub mod header;
+pub mod logins_list;
+
 use super::Message;
 use crate::app::back::login_gestion::login_storing::Login;
-use iced::widget::{button, column, row, text_input};
+use crate::app::style::theme::Theme;
+use iced::widget::{button, column, scrollable};
 
-fn adding_login(
-    new_login_name: &str,
-    new_login_username: &str,
-    new_login_password: &str,
-) -> iced::Element<'static, Message> {
-    let name = text_input("Name", new_login_name, Message::LoginNameChange);
-    let username = text_input("username", new_login_username, Message::LoginUsernameChange);
-    let password = text_input("password", new_login_password, Message::PasswordChange);
-    let submit_button = button("Submit")
-        .width(iced::Length::FillPortion(1))
-        .on_press(Message::RegisterNewLoginPress(
-            new_login_name.to_string(),
-            new_login_password.to_string(),
-            new_login_username.to_string(),
-        ));
+use buttons_view::adding_login;
+use logins_list::login_view_cell;
 
-    column![name, username, password, submit_button]
-        .spacing(20)
-        .into()
-}
-
-fn classic_display() -> iced::Element<'static, Message> {
+fn classic_display(
+    logins: &Vec<Login>,
+) -> iced::Element<'static, Message, iced::Renderer<crate::app::style::theme::Theme>> {
     let add_login_button = button("add login")
         .width(iced::Length::Units(125))
         .on_press(Message::AddLoginPress);
 
-    let login_gestion = row!().push(add_login_button);
-    column![login_gestion].spacing(20).into()
+    let list_of_login = logins
+        .into_iter()
+        .map(|login| login_view_cell(login))
+        .collect::<Vec<iced::Element<'static, Message, iced::Renderer<crate::app::style::theme::Theme>>>>(
+        );
+
+    // column![add_login_button, list_of_login].spacing(20).into()
+    scrollable(
+        column(list_of_login)
+            .push(add_login_button)
+            .height(iced::Length::Fill)
+            .spacing(10),
+    )
+    .into()
 }
 
 pub fn main_page_view(
@@ -38,10 +39,9 @@ pub fn main_page_view(
     new_login_username: &str,
     new_login_password: &str,
     adding_password: bool,
-) -> iced::Element<'static, Message> {
-    dbg!(logins);
+) -> iced::Element<'static, Message, iced::Renderer<Theme>> {
     match adding_password {
         true => adding_login(new_login_name, new_login_username, new_login_password),
-        false => classic_display(),
+        false => classic_display(logins),
     }
 }

@@ -4,7 +4,9 @@ use std::path::Path;
 
 const MASTER_PASSWORD_FILE_PATH: &str = "C:\\Users\\elieu\\AppData\\Local\\rustKey.json";
 
-fn register(password_entered: &str) -> iced::Element<'static, Message> {
+fn register(
+    password_entered: &str,
+) -> iced::Element<'static, Message, iced::Renderer<crate::app::style::theme::Theme>> {
     let master_password_input_box = text_input(
         "my password",
         password_entered,
@@ -24,7 +26,9 @@ fn register(password_entered: &str) -> iced::Element<'static, Message> {
 }
 
 #[allow(dead_code)]
-fn login(password_entered: &str) -> iced::Element<'static, Message> {
+fn login(
+    password_entered: &str,
+) -> iced::Element<'static, Message, iced::Renderer<crate::app::style::theme::Theme>> {
     let master_password_input_box = text_input(
         "my password",
         password_entered,
@@ -43,7 +47,9 @@ fn login(password_entered: &str) -> iced::Element<'static, Message> {
         .into()
 }
 
-pub fn master_login_view(password_entered: &str) -> iced::Element<'static, Message> {
+pub fn master_login_view(
+    password_entered: &str,
+) -> iced::Element<'static, Message, iced::Renderer<crate::app::style::theme::Theme>> {
     match Path::new(MASTER_PASSWORD_FILE_PATH).exists() {
         true => login(password_entered),
         false => register(password_entered),

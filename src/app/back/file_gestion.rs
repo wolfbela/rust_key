@@ -60,7 +60,7 @@ pub fn encrypt_content(content: &str, key: &[u8]) -> String {
     To start, will create the encryption_key from the general key gave by the hashing of the master password
     */
     let mut encryption_key = SealingKey::new(
-        UnboundKey::new(&CHACHA20_POLY1305, &key).unwrap(),
+        UnboundKey::new(&CHACHA20_POLY1305, key).unwrap(),
         nonce_sequence,
     );
 

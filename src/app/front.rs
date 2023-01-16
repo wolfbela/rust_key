@@ -1,12 +1,11 @@
 pub mod main_page;
 pub mod master_loggin_page;
 
+use crate::app::back::master_login::{register_master_password, verify_master_password};
 use crate::app::back::{
     file_gestion::decrypt_content, login_gestion::login_storing::Login, write_logins_into_file,
 };
 use iced::{window, Application, Command, Element, Subscription};
-
-use super::back::master_login::{register_master_password, verify_master_password};
 use main_page::main_page_view;
 use master_loggin_page::master_login_view;
 
@@ -111,9 +110,9 @@ impl Application for PasswordManager {
             }
             Message::RegisterNewLoginPress(name, username, password) => {
                 self.logins.push(Login {
-                    name: name,
-                    username: username,
-                    password: password,
+                    name,
+                    username,
+                    password,
                     associated_websites: String::from(""),
                 });
 
@@ -132,7 +131,6 @@ impl Application for PasswordManager {
                 At this time, we can save the logins in a file and then live the
                 */
                 if iced::Event::Window(window::Event::CloseRequested) == event {
-                    dbg!("Sould exit know");
                     match write_logins_into_file(
                         serde_json::to_string(&self.logins).unwrap().as_str(),
                         PATH_OF_LOGINS_FILE,
@@ -165,7 +163,7 @@ impl Application for PasswordManager {
         self.should_exit
     }
 
-    fn view(&self) -> Element<'_, Self::Message> {
+    fn view(&self) -> Element<'_, Self::Message, iced::Renderer<crate::app::style::theme::Theme>> {
         match self.is_logged {
             /*
             Self passwords is encrypted at the beginning, it will be decrypted after the user is logged in.
@@ -184,7 +182,7 @@ impl Application for PasswordManager {
 
     type Executor = iced::executor::Default;
 
-    type Theme = iced::Theme;
+    type Theme = crate::app::style::theme::Theme;
 
     type Flags = ();
 }

@@ -32,13 +32,12 @@ impl MyNonceSequence {
     /*
     We need to reload the nonces when the application is reloading to access the stored logins again.
     */
-    pub fn save_nonce_sequence(nonces: &Vec<Nonce>) -> std::io::Result<()> {
+    pub fn save_nonce_sequence(nonces: &[Nonce]) -> std::io::Result<()> {
         /*
         First of all, we need to change the Vec<Nonce> to a vector of slices of u8.
         We can't serialize Vec<node> so we need to change it to a serializable type.
         */
-        let vec_nonces_values: Vec<&[u8; NONCE_LEN]> =
-            nonces.into_iter().map(|x| x.as_ref()).collect();
+        let vec_nonces_values: Vec<&[u8; NONCE_LEN]> = nonces.iter().map(|x| x.as_ref()).collect();
 
         /*
         Now come the serialization of the Vec into a string.
@@ -62,8 +61,6 @@ pub fn load_nonces() -> Vec<Nonce> {
     */
     let nonces_as_arr: Vec<Vec<u8>> = serde_json::from_str(&file_content).unwrap();
     let mut res: Vec<Nonce> = Vec::new();
-
-    dbg!(&nonces_as_arr);
 
     /*
     Change values in nonces
