@@ -5,8 +5,7 @@ use iced::Color;
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub enum Button {
     #[default]
-    Login,
-    Actions,
+    Menus,
 }
 
 impl button::StyleSheet for Theme {
@@ -14,10 +13,9 @@ impl button::StyleSheet for Theme {
 
     fn active(&self, _style: &Button) -> button::Appearance {
         button::Appearance {
-            background: self.button_no_hover.into(),
-            border_color: self.border_color,
-            text_color: self.text,
-            border_radius: 2.0,
+            background: self.secondary.into(),
+            text_color: self.outline,
+            border_radius: 0.0,
             ..button::Appearance::default()
         }
     }
@@ -26,7 +24,8 @@ impl button::StyleSheet for Theme {
         let active = self.active(style);
 
         button::Appearance {
-            background: self.button_hover.into(),
+            background: self.outline.into(),
+            text_color: self.main,
             ..active
         }
     }

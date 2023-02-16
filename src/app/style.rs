@@ -1,5 +1,6 @@
 pub mod button_theme;
 pub mod container;
+pub mod rule;
 pub mod scrollable_theme;
 pub mod text_input;
 pub mod theme;
@@ -20,8 +21,8 @@ impl application::StyleSheet for Theme {
     fn appearance(&self, style: &Self::Style) -> application::Appearance {
         match style {
             Application::Default => application::Appearance {
-                background_color: self.background.into(),
-                text_color: self.text,
+                background_color: self.main.into(),
+                text_color: self.secondary,
             },
         }
     }
@@ -48,8 +49,10 @@ impl text::StyleSheet for Theme {
 
     fn appearance(&self, style: Self::Style) -> text::Appearance {
         match style {
-            Text::Default => Default::default(),
-            Text::Color(c) => text::Appearance { color: Some(c) },
+            Text::Default => text::Appearance {
+                color: Color::BLACK.into(),
+            },
+            Text::Color(c) => text::Appearance { color: c.into() },
         }
     }
 }

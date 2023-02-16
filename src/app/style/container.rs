@@ -1,6 +1,5 @@
 use super::theme::Theme;
-use iced::widget::container;
-use iced::Color;
+use iced::{widget::container, Color};
 
 /*
  * Container
@@ -8,15 +7,9 @@ use iced::Color;
 #[derive(Clone, Copy, Default)]
 pub enum Container {
     #[default]
-    Transparent,
-    Box,
-    Custom(fn(&Theme) -> container::Appearance),
-}
-
-impl From<fn(&Theme) -> container::Appearance> for Container {
-    fn from(f: fn(&Theme) -> container::Appearance) -> Self {
-        Self::Custom(f)
-    }
+    NotSelectable,
+    NotSelected,
+    Selected,
 }
 
 impl container::StyleSheet for Theme {
@@ -24,15 +17,15 @@ impl container::StyleSheet for Theme {
 
     fn appearance(&self, style: &Self::Style) -> container::Appearance {
         match style {
-            Container::Transparent => Default::default(),
-            Container::Box => container::Appearance {
+            Container::Selected => Default::default(),
+            Container::NotSelected => todo!(),
+            Container::NotSelectable => container::Appearance {
                 text_color: None,
-                background: self.background.into(),
+                background: None,
                 border_radius: 2.0,
                 border_width: 0.0,
-                border_color: Color::BLACK,
+                border_color: Color::TRANSPARENT,
             },
-            Container::Custom(f) => f(self),
         }
     }
 }

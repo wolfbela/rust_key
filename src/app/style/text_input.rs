@@ -13,42 +13,45 @@ pub enum TextInput {
 impl text_input::StyleSheet for Theme {
     type Style = TextInput;
 
-    fn active(&self, style: &Self::Style) -> text_input::Appearance {
+    fn active(&self, _style: &Self::Style) -> text_input::Appearance {
         text_input::Appearance {
-            background: self.input_background.into(),
-            border_radius: 2.0,
-            border_width: 1.0,
-            border_color: self.border_color,
+            background: Color::TRANSPARENT.into(),
+            border_radius: 5.0,
+            border_width: 3.0,
+            border_color: self.secondary,
         }
     }
 
-    fn hovered(&self, style: &Self::Style) -> text_input::Appearance {
+    fn hovered(&self, _style: &Self::Style) -> text_input::Appearance {
         text_input::Appearance {
-            background: self.input_background.into(),
-            border_radius: 2.0,
-            border_width: 1.0,
-            border_color: self.border_color,
+            background: Color::TRANSPARENT.into(),
+            border_radius: 5.0,
+            border_width: 3.0,
+            border_color: Color {
+                a: 0.9,
+                ..self.outline
+            },
         }
     }
 
-    fn focused(&self, style: &Self::Style) -> text_input::Appearance {
+    fn focused(&self, _style: &Self::Style) -> text_input::Appearance {
         text_input::Appearance {
-            background: self.input_background.into(),
-            border_radius: 2.0,
-            border_width: 1.0,
-            border_color: self.border_color,
+            background: Color::TRANSPARENT.into(),
+            border_radius: 5.0,
+            border_width: 3.0,
+            border_color: self.outline,
         }
     }
 
-    fn placeholder_color(&self, style: &Self::Style) -> Color {
-        self.background
+    fn placeholder_color(&self, _style: &Self::Style) -> Color {
+        self.outline
     }
 
-    fn value_color(&self, style: &Self::Style) -> Color {
-        self.background
+    fn value_color(&self, _style: &Self::Style) -> Color {
+        self.outline
     }
 
-    fn selection_color(&self, style: &Self::Style) -> Color {
-        self.background
+    fn selection_color(&self, _style: &Self::Style) -> Color {
+        self.main
     }
 }

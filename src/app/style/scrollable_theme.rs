@@ -14,43 +14,35 @@ impl scrollable::StyleSheet for Theme {
 
     fn active(&self, style: &Self::Style) -> scrollable::Scrollbar {
         match style {
-            Scrollable::Default => {
-                let palette = self;
-
-                scrollable::Scrollbar {
-                    background: palette.background.into(),
+            Scrollable::Default => scrollable::Scrollbar {
+                background: Color::TRANSPARENT.into(),
+                border_radius: 2.0,
+                border_width: 0.0,
+                border_color: Color::TRANSPARENT,
+                scroller: scrollable::Scroller {
+                    color: Color::TRANSPARENT,
                     border_radius: 2.0,
                     border_width: 0.0,
                     border_color: Color::TRANSPARENT,
-                    scroller: scrollable::Scroller {
-                        color: palette.background,
-                        border_radius: 2.0,
-                        border_width: 0.0,
-                        border_color: Color::TRANSPARENT,
-                    },
-                }
-            }
+                },
+            },
         }
     }
 
     fn hovered(&self, style: &Self::Style) -> scrollable::Scrollbar {
         match style {
-            Scrollable::Default => {
-                let palette = self;
-
-                scrollable::Scrollbar {
-                    background: palette.background.into(),
+            Scrollable::Default => scrollable::Scrollbar {
+                background: Color::TRANSPARENT.into(),
+                border_radius: 2.0,
+                border_width: 0.0,
+                border_color: Color::TRANSPARENT,
+                scroller: scrollable::Scroller {
+                    color: Color::TRANSPARENT,
                     border_radius: 2.0,
                     border_width: 0.0,
                     border_color: Color::TRANSPARENT,
-                    scroller: scrollable::Scroller {
-                        color: palette.text,
-                        border_radius: 2.0,
-                        border_width: 0.0,
-                        border_color: Color::TRANSPARENT,
-                    },
-                }
-            }
+                },
+            },
         }
     }
 
