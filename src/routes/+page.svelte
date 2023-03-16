@@ -14,15 +14,29 @@
     }
 </script>
 
-<div>
-    <input id="greet-input" placeholder="Enter a name..." bind:value={name} />
-    <button on:click={greet}>Greet</button>
-    <button on:click={register}>register</button>
-    <p>{greetMsg}</p>
-</div>
+<body>
+    <div>
+        <input
+            id="greet-input"
+            placeholder="Enter a name..."
+            bind:value={new_master_password}
+        />
+        <button on:click={greet}>Greet</button>
+        <button on:click={register}>register</button>
+        <p>{greetMsg}</p>
+    </div>
+</body>
 
 <style>
     body {
-        background-color: #ffb87e;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+    }
+
+    body > div {
+        flex: 1;
+        justify-content: center;
+        align-items: center;
     }
 </style>
