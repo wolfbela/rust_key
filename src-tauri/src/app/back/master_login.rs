@@ -22,7 +22,7 @@ struct MasterPassword {
 This function will serialize the MasterPassword struct into a json.
 After that, the json will be store in the computer.
 */
-#[allow(dead_code)]
+#[tauri::command(rename_all = "snake_case")]
 pub fn register_master_password(new_master_password: &str) {
     let mut struct_master_password = MasterPassword {
         hashed_password: Vec::with_capacity(CREDENTIAL_LEN),
@@ -52,6 +52,7 @@ pub fn register_master_password(new_master_password: &str) {
         &mut hashed_password_tmp,
     );
 
+    dbg!(hashed_password_tmp.to_vec());
     struct_master_password.hashed_password = hashed_password_tmp.to_vec();
 
     /*
@@ -78,7 +79,7 @@ fn file_to_master_password(path_of_file: &str) -> MasterPassword {
 This function should verify the master password.
 It will apply a PBKDF2 algo on the enter password and will compare it to the stored master password.
 */
-#[allow(dead_code)]
+#[tauri::command]
 pub fn verify_master_password(password_entered: &str) -> bool {
     let reference_password: MasterPassword = file_to_master_password(PATH_OF_MASTER_FILE);
     let nb_iteration: NonZeroU32 = NonZeroU32::new(1024).unwrap();

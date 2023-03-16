@@ -5,7 +5,7 @@ use std::fs;
 use rand::{rngs::StdRng, Rng, SeedableRng};
 use ring::aead::*;
 
-use crate::app::front::PATH_OF_LOGINS_FILE;
+const PATH_OF_LOGINS_FILE: &str = "C:\\Users\\elieu\\AppData\\Local\\rustKey.json";
 use nonce_sequence_gestion::{load_nonces, MyNonceSequence};
 
 /*
