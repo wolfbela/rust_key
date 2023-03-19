@@ -5,11 +5,16 @@
 
 pub mod app;
 
-use app::back::master_login::register_master_password;
+use app::back::master_login::{is_file_here, register_master_password, verify_master_password};
 
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![register_master_password, greet])
+        .invoke_handler(tauri::generate_handler![
+            register_master_password,
+            verify_master_password,
+            is_file_here,
+            greet
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

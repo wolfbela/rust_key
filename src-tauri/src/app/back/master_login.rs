@@ -2,7 +2,7 @@ use crate::app::back::write_master_password_into_file;
 use rand::{rngs::StdRng, Rng, SeedableRng};
 use ring::{digest, pbkdf2};
 use serde::{Deserialize, Serialize};
-use std::{fs, num::NonZeroU32, str};
+use std::{fs, num::NonZeroU32, path::Path, str};
 
 static ALGORITHME: pbkdf2::Algorithm = pbkdf2::PBKDF2_HMAC_SHA512;
 const CREDENTIAL_LEN: usize = digest::SHA512_OUTPUT_LEN;
@@ -79,7 +79,7 @@ fn file_to_master_password(path_of_file: &str) -> MasterPassword {
 This function should verify the master password.
 It will apply a PBKDF2 algo on the enter password and will compare it to the stored master password.
 */
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
 pub fn verify_master_password(password_entered: &str) -> bool {
     let reference_password: MasterPassword = file_to_master_password(PATH_OF_MASTER_FILE);
     let nb_iteration: NonZeroU32 = NonZeroU32::new(1024).unwrap();
@@ -122,4 +122,15 @@ fn sealing_password_logins(password_entered: &str) -> [u8; 32] {
     );
 
     hashed_key
+}
+
+/*
+verifying the existance of the master password hashing file
+*/
+#[tauri::command]
+pub fn is_file_here(path: &str) -> String {
+    if Path::new(path).exists() {
+        return String::from("true");
+    }
+    return String::from("false");
 }
