@@ -23,7 +23,7 @@ This function will serialize the MasterPassword struct into a json.
 After that, the json will be store in the computer.
 */
 #[tauri::command(rename_all = "snake_case")]
-pub fn register_master_password(new_master_password: &str) {
+pub fn register_master_password(master_password: &str) {
     let mut struct_master_password = MasterPassword {
         hashed_password: Vec::with_capacity(CREDENTIAL_LEN),
         salt: [0; 32],
@@ -48,7 +48,7 @@ pub fn register_master_password(new_master_password: &str) {
         ALGORITHME,
         nb_iteration,
         &struct_master_password.salt,
-        &new_master_password.as_bytes(),
+        &master_password.as_bytes(),
         &mut hashed_password_tmp,
     );
 
@@ -80,23 +80,28 @@ This function should verify the master password.
 It will apply a PBKDF2 algo on the enter password and will compare it to the stored master password.
 */
 #[tauri::command(rename_all = "snake_case")]
-pub fn verify_master_password(password_entered: &str) -> bool {
+pub fn verify_master_password(master_password: &str) -> bool {
     let reference_password: MasterPassword = file_to_master_password(PATH_OF_MASTER_FILE);
     let nb_iteration: NonZeroU32 = NonZeroU32::new(1024).unwrap();
 
+    dbg!(master_password);
     /*
     This function  will verify the password entered.
     -   if the result is an Error, it means that we entered the wrong password.
     */
-    pbkdf2::verify(
+    let res = pbkdf2::verify(
         ALGORITHME,
         nb_iteration,
         &reference_password.salt,
-        password_entered.as_bytes(),
+        master_password.as_bytes(),
         &reference_password.hashed_password,
     )
     .map_err(|_| Error::WrongUserOrPassword)
-    .is_ok()
+    .is_ok();
+
+    dbg!(res);
+
+    res
 }
 
 /*
@@ -128,9 +133,12 @@ fn sealing_password_logins(password_entered: &str) -> [u8; 32] {
 verifying the existance of the master password hashing file
 */
 #[tauri::command]
-pub fn is_file_here(path: &str) -> String {
-    if Path::new(path).exists() {
-        return String::from("true");
+pub fn is_file_here(path: &str) -> bool {
+    dbg!(path);
+    let is_file_exist = Path::new(path).exists();
+    dbg!(is_file_exist);
+    if is_file_exist {
+        return true;
     }
-    return String::from("false");
+    return false;
 }

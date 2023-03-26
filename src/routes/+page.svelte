@@ -1,24 +1,28 @@
 <script>
-    import { SystemDrive } from "$env/static/private";
     import { invoke } from "@tauri-apps/api/tauri";
 
-    let path = "";
+    let path = "C:\\Users\\elieu\\AppData\\Local\\rustKey.json";
 
     let name = "";
     let greetMsg = "";
-    let new_master_password = "";
-    let new_password_register = true;
+    let master_password = "";
+    let login_promise = login();
 
-    let is_master_password_present = invoke("is_file_here", { path }).then(
-        (message) => message + ""
-    );
+    async function master_password_existence() {
+        return await invoke("is_file_here", { path });
+    }
 
     async function greet() {
         greetMsg = await invoke("greet", { name });
     }
 
     async function register() {
-        await invoke("register_master_password", { new_master_password });
+        await invoke("register_master_password", { master_password });
+    }
+
+    async function login() {
+        console.log(master_password);
+        return await invoke("verify_master_password", { master_password });
     }
 </script>
 
@@ -27,15 +31,28 @@
         <input
             id="greet-input"
             placeholder="Enter a name..."
-            bind:value={new_master_password}
+            bind:value={master_password}
             class="input_pass"
         />
     </div>
     <div class="button_part">
         <div class="button_pass">
-            {#if new_password_register}
-                <button on:click={register}>register</button>
-            {/if}
+            {#await master_password_existence() then is_here}
+                {#if is_here}
+                    <button on:click={() => (login_promise = login())}
+                        >login</button
+                    >
+                    {#await login_promise then is_logged}
+                        {#if is_logged}
+                            <p>YOU'RE LOGGED IN !</p>
+                        {:else}
+                            <p>WRONG PASSWORD</p>
+                        {/if}
+                    {/await}
+                {:else}
+                    <button on:click={register}>register</button>
+                {/if}
+            {/await}
         </div>
         <div class="logo">
             <img src="" alt="" />
@@ -64,8 +81,8 @@
     input.input_pass {
         box-sizing: border-box;
         position: absolute;
-        width: 30vw;
-        height: 28px;
+        width: 10cm;
+        height: 1cm;
         background: #ffffff;
         border-radius: 9px;
     }
@@ -82,7 +99,7 @@
     }
 
     div.button_pass > button {
-        width: 10vw;
-        height: 5vh;
+        width: 5cm;
+        height: 1cm;
     }
 </style>
