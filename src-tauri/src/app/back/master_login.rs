@@ -6,7 +6,7 @@ use std::{fs, num::NonZeroU32, path::Path, str};
 
 static ALGORITHME: pbkdf2::Algorithm = pbkdf2::PBKDF2_HMAC_SHA512;
 const CREDENTIAL_LEN: usize = digest::SHA512_OUTPUT_LEN;
-const PATH_OF_MASTER_FILE: &str = "C:\\Users\\elieu\\AppData\\Local\\rustKey.json";
+const PATH_OF_MASTER_FILE: &str = "C:\\Users\\elieu\\AppData\\Local\\rustKey\\master.json";
 
 enum Error {
     WrongUserOrPassword,

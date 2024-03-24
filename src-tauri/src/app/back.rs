@@ -12,7 +12,10 @@ use file_gestion::encrypt_content;
 use std::fs::File;
 use std::io::prelude::*;
 
+const PATH_OF_RUSTKEY_DIRECTORY: &str = "C:\\Users\\elieu\\AppData\\Local\\rustKey";
+
 pub fn write_master_password_into_file(content: &str, path: &str) -> std::io::Result<()> {
+    let _ = std::fs::create_dir(PATH_OF_RUSTKEY_DIRECTORY);
     let mut file = File::create(path)?;
     file.write_all(content.as_bytes())?;
     Ok(())
