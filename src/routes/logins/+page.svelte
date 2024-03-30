@@ -26,16 +26,23 @@
         await load_logins();
     }
 
-    async function delete_login() {}
+    async function delete_login(login_index: number) {
+        await invoke("delete_login", {
+            login_id: login_index,
+        });
+
+        await save_logins();
+        await load_logins();
+    }
 </script>
 
 <div class="logins_page" on:close={save_logins}>
     {#await load_logins() then loads}
         {#if loads}
-            {#each JSON.parse(logins) as login}
+            {#each JSON.parse(logins) as login, index (index)}
                 <div class="login">
                     <div class="subpart">
-                        <h4>{login.username}</h4>
+                        <h4>{login.username + " " + index}</h4>
                     </div>
                     <div class="subpart">
                         <h4>{login.password}</h4>
@@ -49,7 +56,7 @@
                     >
                         <button
                             style="background-color: #dd5555;"
-                            on:click={delete_login}
+                            on:click={() => delete_login(index)}
                         ></button>
                         <button style="background-color: #dddd55;"></button>
                     </div>

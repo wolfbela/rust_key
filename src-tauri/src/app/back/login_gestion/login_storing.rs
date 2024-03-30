@@ -1,4 +1,6 @@
 use serde::{Deserialize, Serialize};
+use std::ptr::addr_of;
+
 const PATH_OF_LOGINS_FILE: &str = "C:\\Users\\elieu\\AppData\\Local\\rustKey\\logins.json";
 pub static mut LOGINS: Vec<Login> = Vec::new();
 
@@ -43,9 +45,19 @@ pub fn create_new_login(name: &str, username: &str, password: &str, associated_w
     println!("----------> create new login");
     unsafe {
         LOGINS.push(Login::new(name, username, password, associated_websites));
-        dbg!(&LOGINS);
+        dbg!(addr_of!(LOGINS));
     }
 }
 
-#[tauri::command(renam_all = "snake_case")]
-pub fn delete_login(login_id: u16) {}
+/*
+This function will take the ID of the login.
+It will remove it from the LOGINS var.
+*/
+#[tauri::command(rename_all = "snake_case")]
+pub fn delete_login(login_id: u16) {
+    println!("----------> Delete");
+    unsafe {
+        LOGINS.remove(login_id.into());
+        dbg!(LOGINS);
+    }
+}
