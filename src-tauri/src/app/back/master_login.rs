@@ -113,7 +113,7 @@ The goal of this is the automaticly generate the sealing passwords key only when
 With that, it won't be possible for a malicious user to still the key and decrypt the logins store in the app.
 */
 #[allow(dead_code)]
-fn sealing_password_logins(password_entered: &str) -> [u8; 32] {
+pub fn sealing_password_logins(password_entered: &[u8]) -> [u8; 32] {
     let reference_password: MasterPassword = file_to_master_password(PATH_OF_MASTER_FILE);
     let mut hashed_key = [0u8; ring::digest::SHA256_OUTPUT_LEN];
     let nb_iteration: NonZeroU32 = NonZeroU32::new(500).unwrap();
@@ -122,7 +122,7 @@ fn sealing_password_logins(password_entered: &str) -> [u8; 32] {
         pbkdf2::PBKDF2_HMAC_SHA256,
         nb_iteration,
         &reference_password.salt,
-        &password_entered.as_bytes(),
+        password_entered,
         &mut hashed_key,
     );
 

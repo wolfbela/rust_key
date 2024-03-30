@@ -1,6 +1,5 @@
 <script>
     import { goto } from "$app/navigation";
-    import { redirect } from "@sveltejs/kit";
     import { invoke } from "@tauri-apps/api/tauri";
 
     let path = "C:\\Users\\elieu\\AppData\\Local\\rustKey\\master.json";
@@ -26,7 +25,7 @@
 
         if (pass) {
             console.log("CORRECT PASSWORD !!");
-            goto("/logins");
+            goto("/logins?master_key=" + master_password);
         } else {
             console.log("WRONG PASSWORD !!");
         }
@@ -75,10 +74,12 @@
 
     .input_pass {
         width: 20rem;
+        height: 100%;
         margin-right: 1rem;
 
         display: flex;
-        place-content: center center;
+        justify-content: center;
+        align-items: center;
     }
 
     input {
@@ -86,6 +87,7 @@
         position: absolute;
         background: #ffffff;
         border-radius: 0.4rem;
+
         width: 20rem;
         height: 2rem;
 
@@ -96,15 +98,29 @@
 
     input:focus {
         background-color: #fefded;
-        border: solid 1px #fa7070;
     }
 
     .button_part {
         width: 5rem;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     button {
         width: 5rem;
         height: 2rem;
+
+        border-radius: 0.4rem;
+        border: solid 1px #a1c398;
+        background-color: #fefded;
+
+        filter: brightness(0.9);
+        transition: 0.1s;
+    }
+
+    button:hover {
+        filter: brightness(1.2);
     }
 </style>

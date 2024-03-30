@@ -1,12 +1,14 @@
 pub mod nonce_sequence_gestion;
 
-use std::fs;
+use std::{fs, io::Read};
 
 use rand::{rngs::StdRng, Rng, SeedableRng};
 use ring::aead::*;
 
-const PATH_OF_LOGINS_FILE: &str = "C:\\Users\\elieu\\AppData\\Local\\rustKey.json";
+const PATH_OF_LOGINS_FILE: &str = "C:\\Users\\elieu\\AppData\\Local\\rustKey\\logins.json";
 use nonce_sequence_gestion::{load_nonces, MyNonceSequence};
+
+use super::master_login::sealing_password_logins;
 
 /*
 Each block has to be of 64 bits. each block need a nonce to have unique encryption. A nonce (Number once = number used one time).
@@ -37,7 +39,7 @@ fn create_nonce_sequence(plane_text: &[u8]) -> Vec<Nonce> {
 in CHACHA20 the text is separate in blocks of 64 bytes.
 each of those blocks is made of the plain text and a tag which ensure that the bloc has no issues of modification or alteration
     this tag is générated by the POLY1305 function.
-the goal of the algorithme is to take the whole block, multiplies is by the 'encryption_key'.
+the goal of the algorithme is to take the whole block, multiplies it by the 'encryption_key'.
 Also, each block is associated with a counter wich ensure an encryption wich is unique.
 */
 pub fn encrypt_content(content: &str, key: &[u8]) -> String {
@@ -52,15 +54,13 @@ pub fn encrypt_content(content: &str, key: &[u8]) -> String {
     Save the nonces to decrypt the logins when the app start again.
     */
     match MyNonceSequence::save_nonce_sequence(&nonce_sequence.nonces) {
-        Ok(_) => dbg!("Nonces Well Saved"),
-        Err(_) => dbg!("Could not save Nonces"),
+        Ok(_) => println!("Nonces Well Saved"),
+        Err(_) => panic!("Could not save Nonces"),
     };
 
-    /*
-    To start, will create the encryption_key from the general key gave by the hashing of the master password
-    */
+    let hash_key = sealing_password_logins(key);
     let mut encryption_key = SealingKey::new(
-        UnboundKey::new(&CHACHA20_POLY1305, key).unwrap(),
+        UnboundKey::new(&CHACHA20_POLY1305, &hash_key).unwrap(),
         nonce_sequence,
     );
 
@@ -107,8 +107,9 @@ pub fn decrypt_content(key: &[u8]) -> String {
     /*
     Creation of the decryption key using the hash of the master password (after login)
     */
+    let hash_key = sealing_password_logins(key);
     let mut decryption_key = OpeningKey::new(
-        UnboundKey::new(&CHACHA20_POLY1305, &key).unwrap(),
+        UnboundKey::new(&CHACHA20_POLY1305, &hash_key).unwrap(),
         nonce_sequence,
     );
 
