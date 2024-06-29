@@ -9,7 +9,7 @@
 - [x] Main password hash
 - [x] Password creation for encryption
 
-- Front end
+## Front end
 - [x] Make design on Figma
 - [x] Create basic main login page
 - [ ] Create logins visualisation page
